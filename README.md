@@ -20,7 +20,7 @@ Restart netctl-auto systemd service.
 Ping [DOMAIN] until a response is recieved and display latenay. Useful for notifying you when you are reconnected to the internet after restarting netctl or easily testing your connection. Defaults to `google.com`.
 
 ## Examples:
-
+```
 $ na
 [1]:   wlp58s0-- DEN Airport Free WiFi
 [2]:   wlp58s0-BNGuest
@@ -60,7 +60,7 @@ e
 
 $ na p 
 Connected: Latency with google.com ~19.8 ms
-
+```
 ## Installation:
 Clone the repo and symlink na.sh to somewhere in your  `$PATH`, or add 
 ```
