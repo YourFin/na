@@ -1,5 +1,5 @@
 # na.sh: The ultimate in cli netctl-auto laziness!
-Do you find that typing out "netctl-auto switch-to" takes too darn long? Do you wish to be prompted to launah wifi-menu way too much? Do you like having wrapper scripts for your wrapper scripts? Then na.sh is for YOU!
+Do you find that typing out "netctl-auto switch-to" takes too darn long? Do you wish to be prompted to launch wifi-menu way too much? Do you like having wrapper scripts for your wrapper scripts? Then na.sh is for YOU!
 
 ## Features:
 - Easy profile switching with case-insensitve partial name matching
