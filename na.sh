@@ -75,76 +75,81 @@ listAndChoose ()
     echo '[e] exit'
     
     read userinput
-    if [ -z $(echo $userinput | sed 's/[0-9]*//') ] && [ ! -z "$userinput" ] && [ "$userinput" -le "${#connections[@]}" ]
+    if [ -z "$userinput" ] ; then
+	return
+    elif [ -z $(echo $userinput | sed 's/[0-9]*//') ] && [ "$userinput" -le "${#connections[@]}" ]
         # if userinput is entirely numbers and a valid index and non-null
     then
 	switchProfile $(echo ${connections[(($userinput - 1))]} | cut -c 3-)
-
     elif $(hash wifi-menu 2>/dev/null) && [[ "$userinput" == "w" || "$userinput" == "W" ]]; then
         eval $wifimenucommand
-    fi #by default do nothing
+    else 
+	switchHandler $userinput
+    fi
 }
 
 switchHandler ()
 {
-	if [ -e "$netctlProfilePath/$1" ] && [ ! -d "$netctlProfilePath/$1" ] ; then
-		switchProfile $1
-	else 
-		inputProfiles=( $(ls -p $netctlProfilePath | grep -v '/' | #List only non-directories
-			grep -o '.*'$1'.*') $(grep -i -s -l "ESSID=.*$1.*" $netctlProfilePath/* | sed "s:$netctlProfilePath/::") )
-		if [ ! -z $inputProfiles ] ; then
-			#remove duplicates
-			eval inputProfiles=( $(printf "%q\n" "${inputProfiles[@]}" | sort -u) )
-			matchingProfiles=()
-			for thing in ${inputProfiles[@]} ; do
-				if [ ! -d "$thing" ] ; then
-					matchingProfiles+=("$thing")
-				fi
-			done
-
-			#ask to switch to the first if it's the only one
-			if [ "${#matchingProfiles[@]}" -eq "1" ] ; then
-				switchProfilePrompt "${matchingProfiles[0]}"
-			else
-				echo "Possible matches:"
-				for (( ii=0; ii<${#matchingProfiles[@]}; ii++ ));
-				do
-					echo "[$(($ii + 1))]: ${matchingProfiles[ii]}"
-				done
-        			echo '[w] launch wifi-menu'
-				echo '[e] exit'
-			        read userinput
-			        if [ -z $(echo $userinput | sed 's/[0-9]*//') ] && [ ! -z "$userinput" ] && [ "$userinput" -le "${#matchingProfiles[@]}" ]
-			            # if userinput is entirely numbers and a valid index and non-null
-			        then
-					switchProfile "${matchingProfiles[(($userinput - 1))]}"
-
-			        elif $(hash wifi-menu 2>/dev/null) && [[ "$userinput" == "w" || "$userinput" == "W" ]]; then
-			            eval $wifimenucommand
-			        fi #by default do nothing
-			fi
-		else
-			echo "No matching profiles found; launch wifi-menu? (Y/n)"
-			read userinput
-			if [ -z $(echo "$userinput" | grep -E '[Nn][Oo]?') ]; then
-				eval $wifimenucommand
-			fi
+    if [ -e "$netctlProfilePath/$1" ] && [ ! -d "$netctlProfilePath/$1" ] ; then
+	switchProfile $1
+    else 
+	inputProfiles=( $(ls -p $netctlProfilePath | grep -v '/' | #List only non-directories
+	grep -o '.*'$1'.*') $(grep -i -s -l "ESSID=.*$1.*" $netctlProfilePath/* | sed "s:$netctlProfilePath/::") )
+	if [ ! -z $inputProfiles ] ; then
+	    #remove duplicates
+	    eval inputProfiles=( $(printf "%q\n" "${inputProfiles[@]}" | sort -u) )
+	    matchingProfiles=()
+	    for thing in ${inputProfiles[@]} ; do
+		if [ ! -d "$thing" ] ; then
+		    matchingProfiles+=("$thing")
 		fi
+	    done
+
+	    #ask to switch to the first if it's the only one
+	    if [ "${#matchingProfiles[@]}" -eq "1" ] ; then
+		switchProfilePrompt "${matchingProfiles[0]}"
+	    else
+		echo "Possible matches:"
+		for (( ii=0; ii<${#matchingProfiles[@]}; ii++ ));
+		do
+		    echo "[$(($ii + 1))]: ${matchingProfiles[ii]}"
+		done
+		echo '[w] launch wifi-menu'
+		echo '[e] exit'
+		read userinput
+		if [ -z $(echo $userinput | sed 's/[0-9]*//') ] && [ ! -z "$userinput" ] && [ "$userinput" -le "${#matchingProfiles[@]}" ]
+		    # if userinput is entirely numbers and a valid index and non-null
+		then
+		    switchProfile "${matchingProfiles[(($userinput - 1))]}"
+
+		elif $(hash wifi-menu 2>/dev/null) && [[ "$userinput" == "w" || "$userinput" == "W" ]]; then
+		    eval $wifimenucommand
+		fi #by default do nothing
+	    fi
+	else
+	    echo "No matching profiles found; launch wifi-menu? (Y/n)"
+	    read userinput
+	    if [ -z $(echo "$userinput" | grep -E '[Nn][Oo]?') ]; then
+		eval $wifimenucommand
+	    fi
 	fi
+    fi
 }
 
 if [[ -z $1 ]]; then
     listAndChoose
 elif [[ "$1" == "restart" || "$1" == "r" ]]; then
     eval $restartcommand
+elif [[ "$1" == "w" || "$1" == "menu" ]]; then
+    eval $wifimenucommand
 elif [[ "$1" == "ping" || "$1" == "p" ]]; then
     if [[ -z $2 ]]; then
-        pingLocation='google.com'
+	pingLocation='google.com'
     else
-        pingLocation=$2
+	pingLocation=$2
     fi
     while [[ ! `ping -c 1 -W 1 $pingLocation 2>/dev/null` ]]; do sleep 0.1; done
     echo Connected: $(ping -c 1 -w 0.5 $pingLocation 2>/dev/null | grep -o 'time=[0-9/.]* ms' | sed "s/time/Latency with $pingLocation/" | sed 's/=/ ~/')
 else #insert something here that tries to correct wifi names or takes parts; save for later
-	switchHandler $1
+    switchHandler $1
 fi
