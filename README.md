@@ -1,5 +1,5 @@
 # na.sh: The ultimate in cli netctl-auto laziness!
-Do you find that typing out "netctl-auto switch-to" takes too darn long? Do you wish to be prompted to launah wifi-menu way too much? Do you like having wrapper scripts for your wrapper scripts? Then na.sh is for YOU!
+Do you find that typing out "netctl-auto switch-to" takes too darn long? Do you wish to be prompted to launch wifi-menu way too much? Do you like having wrapper scripts for your wrapper scripts? Then na.sh is for YOU!
 
 ## Features:
 - Easy profile switching with case-insensitve partial name matching
@@ -20,7 +20,7 @@ Restart netctl-auto systemd service.
 Ping [DOMAIN] until a response is recieved and display latenay. Useful for notifying you when you are reconnected to the internet after restarting netctl or easily testing your connection. Defaults to `google.com`.
 
 ## Examples:
-
+```
 $ na
 [1]:   wlp58s0-- DEN Airport Free WiFi
 [2]:   wlp58s0-BNGuest
@@ -60,7 +60,7 @@ e
 
 $ na p 
 Connected: Latency with google.com ~19.8 ms
-
+```
 ## Installation:
 Clone the repo and symlink na.sh to somewhere in your  `$PATH`, or add 
 ```
