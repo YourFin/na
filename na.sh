@@ -99,9 +99,9 @@ switchHandler ()
 	    #remove duplicates
 	    eval inputProfiles=( $(printf "%q\n" "${inputProfiles[@]}" | sort -u) )
 	    matchingProfiles=()
-	    for thing in ${inputProfiles[@]} ; do
-		if [ ! -d "$thing" ] ; then
-		    matchingProfiles+=("$thing")
+	    for profile in ${inputProfiles[@]} ; do
+		if [ ! -d "$profile" ] ; then
+		    matchingProfiles+=("$profile")
 		fi
 	    done
 
