@@ -17,7 +17,7 @@ Switch to profile `NAME`. Should NAME not exist, looks for partial matches on al
 - `na r`
 Restart netctl-auto systemd service.
 - `na p [DOMAIN]`
-Ping [DOMAIN] until a response is recieved and display latenay. Useful for notifying you when you are reconnected to the internet after restarting netctl or easily testing your connection. Defaults to `google.com`.
+Ping [DOMAIN] until a response is recieved and display latency. Useful for notifying you when you are reconnected to the internet after restarting netctl or easily testing your connection. Defaults to `google.com`.
 
 ## Examples:
 ```
