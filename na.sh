@@ -150,6 +150,6 @@ elif [[ "$1" == "ping" || "$1" == "p" ]]; then
     fi
     while [[ ! `ping -c 1 -W 1 $pingLocation 2>/dev/null` ]]; do sleep 0.1; done
     echo Connected: $(ping -c 1 -w 0.5 $pingLocation 2>/dev/null | grep -o 'time=[0-9/.]* ms' | sed "s/time/Latency with $pingLocation/" | sed 's/=/ ~/')
-else #insert something here that tries to correct wifi names or takes parts; save for later
+else
     switchHandler $1
 fi
