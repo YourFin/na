@@ -117,7 +117,9 @@ switchHandler ()
 		echo '[w] launch wifi-menu'
 		echo '[e] exit'
 		read userinput
-		if [ -z $(echo $userinput | sed 's/[0-9]*//') ] && [ ! -z "$userinput" ] && [ "$userinput" -le "${#matchingProfiles[@]}" ]
+		if [ -z "$userinput" ] ; then
+		    exit
+		elif [ -z $(echo $userinput | sed 's/[0-9]*//') ] && [ ! -z "$userinput" ] && [ "$userinput" -le "${#matchingProfiles[@]}" ]
 		    # if userinput is entirely numbers and a valid index and non-null
 		then
 		    switchProfile "${matchingProfiles[(($userinput - 1))]}"
