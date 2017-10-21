@@ -72,7 +72,7 @@ listAndChoose ()
     if `hash wifi-menu 2>/dev/null` ; then #supress hash error
         echo '[w] launch wifi-menu'
     fi
-    echo '[e] exit'
+    echo '[ ] exit'
     
     read userinput
     if [ -z "$userinput" ] ; then
@@ -115,7 +115,7 @@ switchHandler ()
 		    echo "[$(($ii + 1))]: ${matchingProfiles[ii]}"
 		done
 		echo '[w] launch wifi-menu'
-		echo '[e] exit'
+		echo '[ ] exit'
 		read userinput
 		if [ -z "$userinput" ] ; then
 		    exit
