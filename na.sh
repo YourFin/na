@@ -15,7 +15,7 @@ if [[ ! -z $netctlAuto ]] ; then
     stopallcommand="netctl-auto disable-all"
     wifimenucommandsuffix="systemctl restart $netctlAuto"
     restartcommand="systemctl restart $netctlAuto"
-else 
+else
     switchcommand="netctl switch-to"
     stopallcommand="netctl stop-all"
     restartcommand="systemctl restart $(systemctl | grep netctl | sed 's/.service.*/.service/g')"
@@ -30,7 +30,7 @@ if [[ $EUID -ne 0 ]] ; then
         wifimenucommandsuffix="sudo $wifimenucommandsuffix"
     fi
 
-    if [[ -z $netctlAuto ]] ; then 
+    if [[ -z $netctlAuto ]] ; then
         switchcommand="sudo $switchcommand"
         stopallcommand="sudo $stopallcommand"
     fi
@@ -41,7 +41,7 @@ fi
 if [ -z "$wifimenucommandsuffix" ]; then wifimenucommand="$wifimenucommand && $wifimenucommandsuffix"; fi
 wifimenucommand="echo Lanuching wifi-menu... ; $wifimenucommand"
 
-switchProfile () 
+switchProfile ()
 {
 	if ! [ -e "/etc/netctl/$1" ] ; then
 		echo "Error: profile: \"$1\" does not exist"
@@ -50,9 +50,9 @@ switchProfile ()
 		switchcommand="sudo $switchcommand"
 	fi
 	echo "Switching to $1..."
-	eval $switchcommand $1
+	eval $switchcommand ${1@Q}
 }
-switchProfilePrompt () 
+switchProfilePrompt ()
 {
 	echo "Switch to profile $1? (Y/n)"
 	read userinput
@@ -61,7 +61,7 @@ switchProfilePrompt ()
 	fi
 }
 
-listAndChoose () 
+listAndChoose ()
 {
     connections=( $(netctl-auto list) )
     current='0'
@@ -73,7 +73,7 @@ listAndChoose ()
         echo '[w] launch wifi-menu'
     fi
     echo '[ ] exit'
-    
+
     read userinput
     if [ -z "$userinput" ] ; then
 	return
@@ -83,7 +83,7 @@ listAndChoose ()
 	switchProfile $(echo ${connections[(($userinput - 1))]} | cut -c 3-)
     elif $(hash wifi-menu 2>/dev/null) && [[ "$userinput" == "w" || "$userinput" == "W" ]]; then
         eval $wifimenucommand
-    else 
+    else
 	switchHandler $userinput
     fi
 }
@@ -92,7 +92,7 @@ switchHandler ()
 {
     if [ -e "$netctlProfilePath/$1" ] && [ ! -d "$netctlProfilePath/$1" ] ; then
 	switchProfile $1
-    else 
+    else
 	inputProfiles=( $(ls -p $netctlProfilePath | grep -v '/' | #List only non-directories
 	grep -o '.*'$1'.*') $(grep -i -s -l "ESSID=.*$1.*" $netctlProfilePath/* | sed "s:$netctlProfilePath/::") )
 	if [ ! -z $inputProfiles ] ; then
@@ -146,12 +146,13 @@ elif [[ "$1" == "w" || "$1" == "menu" ]]; then
     eval $wifimenucommand
 elif [[ "$1" == "ping" || "$1" == "p" ]]; then
     if [[ -z $2 ]]; then
-	pingLocation='google.com'
+        pingLocation='google.com'
     else
-	pingLocation=$2
+        pingLocation=$2
     fi
     while [[ ! `ping -c 1 -W 1 $pingLocation 2>/dev/null` ]]; do sleep 0.1; done
     echo Connected: $(ping -c 1 -w 0.5 $pingLocation 2>/dev/null | grep -o 'time=[0-9/.]* ms' | sed "s/time/Latency with $pingLocation/" | sed 's/=/ ~/')
 else
-    switchHandler $1
+    args="$@"
+    switchHandler ${args@Q}
 fi
